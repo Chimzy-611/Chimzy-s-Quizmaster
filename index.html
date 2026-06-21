@@ -1,0 +1,2016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizMaster - Professional Quiz Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1f2937;
+            --light: #f3f4f6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+        }
+
+        .btn-secondary:hover {
+            background: #e11d48;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        /* Screens */
+        .screen {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Login Screen */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .login-box {
+            background: white;
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .login-box h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--dark);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn-block {
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        .toggle-form {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #6b7280;
+        }
+
+        .toggle-form button {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        /* Dashboard */
+        .dashboard {
+            background: rgba(255,255,255,0.95);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard h2 {
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        .dashboard h3 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+        }
+
+        .card h3 {
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .card p {
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .badge-admin {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+
+        /* Quiz */
+        .quiz-container {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s;
+        }
+
+        .question-container {
+            margin-bottom: 2rem;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        .options {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .option {
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .option input[type="radio"] {
+            margin-right: 0.5rem;
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .quiz-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        /* Results */
+        .results-container {
+            background: white;
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 0 auto 2rem;
+        }
+
+        .results-text {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: var(--dark);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            color: var(--dark);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        table th {
+            background: #f3f4f6;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dark);
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        table tr:hover {
+            background: #f9fafb;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-box {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--primary);
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border-left: 4px solid var(--success);
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border-left: 4px solid var(--danger);
+        }
+
+        .alert-info {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            border-left: 4px solid var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .login-box {
+                padding: 2rem;
+            }
+
+            .dashboard {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header" style="display: none;">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">🎯 QuizMaster</div>
+                <div class="user-info">
+                    <span id="userDisplay">User</span>
+                    <span id="roleDisplay" class="badge badge-admin">User</span>
+                    <button class="btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen active">
+        <div class="login-container">
+            <div class="login-box">
+                <h1>🎯 QuizMaster</h1>
+                <div id="loginForm">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="loginUsername" placeholder="Enter username">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter password">
+                    </div>
+                    <button class="btn btn-block" onclick="login()">Login</button>
+                    <div class="toggle-form">
+                        Don't have an account? <button onclick="toggleForm()">Sign Up</button>
+                    </div>
+                </div>
+
+                <div id="signupForm" style="display: none;">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="signupUsername" placeholder="Choose username">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="signupEmail" placeholder="Your email">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="signupPassword" placeholder="Choose password">
+                    </div>
+                    <button class="btn btn-block btn-secondary" onclick="signup()">Sign Up</button>
+                    <div class="toggle-form">
+                        Already have an account? <button onclick="toggleForm()">Login</button>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Screen -->
+    <div id="dashboardScreen" class="screen">
+        <div class="container">
+            <!-- Stats -->
+            <div class="stats-grid" id="statsGrid" style="display: none;">
+                <div class="stat-box">
+                    <div class="stat-label">Total Users</div>
+                    <div class="stat-value" id="statUsers">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Total Quizzes</div>
+                    <div class="stat-value" id="statQuizzes">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Admin Requests</div>
+                    <div class="stat-value" id="statRequests">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Messages</div>
+                    <div class="stat-value" id="statMessages">0</div>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <div style="margin-bottom: 2rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                <button class="btn" onclick="showTab('myQuizzes')">📋 My Quizzes</button>
+                <button class="btn" onclick="showTab('takeQuiz')">✏️ Take Quiz</button>
+                <button class="btn" onclick="showTab('messages')">💬 Messages</button>
+                <button class="btn" id="adminBtn" onclick="showTab('adminPanel')" style="display: none;">⚙️ Admin Panel</button>
+                <button class="btn btn-secondary" id="superAdminBtn" onclick="showTab('superAdmin')" style="display: none;">👑 Super Admin</button>
+            </div>
+
+            <!-- My Quizzes Tab -->
+            <div id="myQuizzesTab" class="tab-content" style="display: none;">
+                <div class="dashboard">
+                    <h2>My Quizzes</h2>
+                    <button class="btn btn-secondary" id="createQuizBtn" onclick="openModal('quizModal')" style="display: none;">+ Create New Quiz</button>
+                    <p id="noPermissionText" style="color: #ef4444; padding: 1rem; background: rgba(239, 68, 68, 0.1); border-radius: 8px; display: none;">🔒 Only admins and the owner can create quizzes. Request admin access from the owner.</p>
+                    <div class="grid" id="myQuizzesGrid" style="margin-top: 1.5rem;"></div>
+                </div>
+            </div>
+
+            <!-- Take Quiz Tab -->
+            <div id="takeQuizTab" class="tab-content" style="display: none;">
+                <div class="dashboard">
+                    <h2>Available Quizzes</h2>
+                    <div class="grid" id="availableQuizzesGrid"></div>
+                </div>
+            </div>
+
+            <!-- Messages Tab -->
+            <div id="messagesTab" class="tab-content" style="display: none;">
+                <div class="dashboard">
+                    <h2>Send Message to Admin</h2>
+                    <div class="form-group">
+                        <label>Subject</label>
+                        <input type="text" id="messageSubject" placeholder="Message subject">
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea id="messageBody" placeholder="Your message here..." style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px; font-family: inherit; min-height: 150px;"></textarea>
+                    </div>
+                    <button class="btn" onclick="sendMessage()">Send Message</button>
+
+                    <h2 style="margin-top: 2rem;">Inbox</h2>
+                    <table id="messagesTable" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>From</th>
+                                <th>Subject</th>
+                                <th>Date</th>
+                                <th>Message</th>
+                            </tr>
+                        </thead>
+                        <tbody id="messagesBody"></tbody>
+                    </table>
+                    <p id="noMessagesText" style="color: #6b7280; text-align: center; padding: 2rem;">No messages yet</p>
+                </div>
+            </div>
+
+            <!-- Admin Panel -->
+            <div id="adminPanelTab" class="tab-content" style="display: none;">
+                <div class="dashboard">
+                    <h2>Admin Dashboard</h2>
+                    <div style="margin-bottom: 2rem;">
+                        <h3>Create Quiz</h3>
+                        <button class="btn btn-secondary" id="adminCreateQuizBtn" onclick="openModal('quizModal')">+ New Quiz</button>
+                    </div>
+
+                    <div>
+                        <h3 style="margin-bottom: 1rem;">My Created Quizzes</h3>
+                        <table id="adminQuizzesTable" style="display: none;">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Questions</th>
+                                    <th>Participants</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminQuizzesBody"></tbody>
+                        </table>
+                        <p id="noAdminQuizzesText" style="color: #6b7280; text-align: center; padding: 2rem;">No quizzes created yet</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Super Admin Panel -->
+            <div id="superAdminTab" class="tab-content" style="display: none;">
+                <div class="dashboard">
+                    <h2>👑 Super Admin Dashboard</h2>
+
+                    <div style="margin-bottom: 1rem;">
+                        <button class="btn btn-danger" onclick="resetDefaults()" style="display: inline-block;">Reset Default Quizzes</button>
+                    </div>
+
+                    <!-- Admin Requests Section -->
+                    <div style="margin-bottom: 3rem;">
+                        <h3 style="margin-bottom: 1rem;">Admin Requests</h3>
+                        <table id="adminRequestsTable" style="display: none;">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminRequestsBody"></tbody>
+                        </table>
+                        <p id="noAdminRequestsText" style="color: #6b7280; text-align: center; padding: 2rem;">No admin requests</p>
+                    </div>
+
+                    <!-- Users & Manage Admins -->
+                    <div style="margin-bottom: 3rem;">
+                        <h3 style="margin-bottom: 1rem;">Manage Admins</h3>
+                        <table id="adminsTable" style="display: none;">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Quizzes Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminsBody"></tbody>
+                        </table>
+                        <p id="noAdminsText" style="color: #6b7280; text-align: center; padding: 2rem;">No admins yet</p>
+                    </div>
+
+                    <!-- All Users (Owner can promote to admin) -->
+                    <div style="margin-bottom: 3rem;">
+                        <h3 style="margin-bottom: 1rem;">All Users</h3>
+                        <table id="allUsersTable" style="display: none;">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allUsersBody"></tbody>
+                        </table>
+                        <p id="noUsersText" style="color: #6b7280; text-align: center; padding: 2rem;">No users yet</p>
+                    </div>
+
+                    <!-- User Scores -->
+                    <div style="margin-bottom: 3rem;">
+                        <h3 style="margin-bottom: 1rem;">User Scores & Results</h3>
+                        <table id="scoresTable" style="display: none;">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Quiz</th>
+                                    <th>Score</th>
+                                    <th>Percentage</th>
+                                    <th>Date Taken</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scoresBody"></tbody>
+                        </table>
+                        <p id="noScoresText" style="color: #6b7280; text-align: center; padding: 2rem;">No results yet</p>
+                    </div>
+
+                    <!-- Messages Inbox -->
+                    <div>
+                        <h3 style="margin-bottom: 1rem;">Received Messages</h3>
+                        <table id="adminMessagesTable" style="display: none;">
+                            <thead>
+                                <tr>
+                                    <th>From</th>
+                                    <th>Subject</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminMessagesBody"></tbody>
+                        </table>
+                        <p id="noAdminMessagesText" style="color: #6b7280; text-align: center; padding: 2rem;">No messages</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Taking Screen -->
+    <div id="quizScreen" class="screen">
+        <div class="container">
+            <div class="quiz-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+
+                <div id="quizContent">
+                    <div class="question-container">
+                        <div class="question-text" id="questionText"></div>
+                        <div class="options" id="optionsContainer"></div>
+                    </div>
+                </div>
+
+                <div class="quiz-actions">
+                    <button class="btn" onclick="goBack()">← Back</button>
+                    <button class="btn" onclick="nextQuestion()">Next →</button>
+                    <button class="btn btn-success" onclick="submitQuiz()" id="submitBtn" style="display: none;">Submit Quiz</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="resultsScreen" class="screen">
+        <div class="container">
+            <div class="results-container">
+                <h1>Quiz Completed! 🎉</h1>
+                <div class="score-circle" id="scoreCircle">0%</div>
+                <div class="results-text" id="resultsText"></div>
+                <button class="btn" onclick="backToDashboard()">Back to Dashboard</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create/Edit Quiz Modal -->
+    <div id="quizModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Quiz</h2>
+                <button class="close-btn" onclick="closeModal('quizModal')">✕</button>
+            </div>
+
+            <div class="form-group">
+                <label>Quiz Title</label>
+                <input type="text" id="quizTitle" placeholder="Enter quiz title">
+            </div>
+
+            <div class="form-group">
+                <label>Quiz Description</label>
+                <textarea id="quizDescription" placeholder="Enter quiz description" style="width: 100%; padding: 0.8rem; border: 2px solid #e5e7eb; border-radius: 8px; font-family: inherit; min-height: 100px;"></textarea>
+            </div>
+
+            <div id="questionsContainer"></div>
+
+            <button class="btn btn-secondary" onclick="addQuestion()">+ Add Question</button>
+
+            <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+                <button class="btn" onclick="saveQuiz()">Save Quiz</button>
+                <button class="btn btn-danger" onclick="closeModal('quizModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Detail Modal -->
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Message Details</h2>
+                <button class="close-btn" onclick="closeModal('messageModal')">✕</button>
+            </div>
+            <div id="messageDetail"></div>
+        </div>
+    </div>
+
+    <script>
+        // Data Structure
+        const SUPER_ADMIN_EMAIL = 'chimzyeze6@gmail.com';
+        let currentUser = null;
+        let users = [
+            { id: 1, username: 'Chimzy', password: 'Chicken123?', email: 'chimzyeze6@gmail.com', role: 'super_admin' }
+        ];
+
+        let quizzes = [];
+        let userScores = [];
+        let messages = [];
+        let adminRequests = [];
+        let currentQuizIndex = 0;
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let sessionQuestions = [];
+
+        // Initialize default quizzes
+        function initializeDefaultQuizzes() {
+            const defaultQuizzes = [
+                {
+                    id: 1,
+                    title: 'General Knowledge',
+                    description: 'Test your general knowledge across various topics',
+                    createdBy: 'admin',
+                    questions: [
+                        { id: 1, text: 'What is the capital of France?', options: ['London', 'Paris', 'Berlin', 'Madrid'], correct: 1 },
+                        { id: 2, text: 'What is 2 + 2?', options: ['3', '4', '5', '6'], correct: 1 },
+                        { id: 3, text: 'Which planet is closest to the sun?', options: ['Venus', 'Mercury', 'Earth', 'Mars'], correct: 1 },
+                        { id: 4, text: 'What is the largest ocean?', options: ['Atlantic', 'Indian', 'Pacific', 'Arctic'], correct: 2 },
+                        { id: 5, text: 'How many continents are there?', options: ['5', '6', '7', '8'], correct: 2 },
+                        { id: 6, text: 'What is the smallest country?', options: ['Monaco', 'Liechtenstein', 'Vatican City', 'San Marino'], correct: 2 },
+                        { id: 7, text: 'Which gas do plants absorb?', options: ['Oxygen', 'Nitrogen', 'Carbon Dioxide', 'Hydrogen'], correct: 2 },
+                        { id: 8, text: 'What is the freezing point of water?', options: ['0°C', '-10°C', '10°C', '32°F'], correct: 0 },
+                        { id: 9, text: 'How many sides does a hexagon have?', options: ['4', '5', '6', '7'], correct: 2 },
+                        { id: 10, text: 'What year did the Titanic sink?', options: ['1912', '1915', '1920', '1905'], correct: 0 }
+                    ]
+                },
+                {
+                    id: 2,
+                    title: 'Science Basics',
+                    description: 'Fundamental science concepts and discoveries',
+                    createdBy: 'admin',
+                    questions: [
+                        { id: 1, text: 'What is H2O?', options: ['Oxygen', 'Water', 'Hydrogen Peroxide', 'Salt'], correct: 1 },
+                        { id: 2, text: 'What is the speed of light?', options: ['3x10^8 m/s', '3x10^9 m/s', '3x10^7 m/s', '3x10^10 m/s'], correct: 0 },
+                        { id: 3, text: 'What is the chemical symbol for gold?', options: ['Go', 'Gd', 'Au', 'Ag'], correct: 2 },
+                        { id: 4, text: 'How many bones does an adult human have?', options: ['186', '206', '226', '246'], correct: 1 },
+                        { id: 5, text: 'What do plants use sunlight for?', options: ['Respiration', 'Photosynthesis', 'Digestion', 'Movement'], correct: 1 },
+                        { id: 6, text: 'What is the powerhouse of the cell?', options: ['Nucleus', 'Ribosome', 'Mitochondria', 'Chloroplast'], correct: 2 },
+                        { id: 7, text: 'What does DNA stand for?', options: ['Deoxyribonucleic Acid', 'Dynamic Nucleic Arrangement', 'Distributed Natural Archives', 'Diagonal Numeric Algorithm'], correct: 0 },
+                        { id: 8, text: 'How many elements are in the periodic table?', options: ['100', '118', '92', '150'], correct: 1 },
+                        { id: 9, text: 'What is the SI unit of force?', options: ['Joule', 'Newton', 'Watt', 'Pascal'], correct: 1 },
+                        { id: 10, text: 'Who discovered gravity?', options: ['Albert Einstein', 'Isaac Newton', 'Galileo Galilei', 'Stephen Hawking'], correct: 1 }
+                    ]
+                },
+                {
+                    id: 3,
+                    title: 'History Quiz',
+                    description: 'Important historical events and figures',
+                    createdBy: 'admin',
+                    questions: [
+                        { id: 1, text: 'In which year did World War II end?', options: ['1943', '1944', '1945', '1946'], correct: 2 },
+                        { id: 2, text: 'Who was the first President of USA?', options: ['Thomas Jefferson', 'George Washington', 'John Adams', 'Benjamin Franklin'], correct: 1 },
+                        { id: 3, text: 'What year did the Berlin Wall fall?', options: ['1987', '1988', '1989', '1990'], correct: 2 },
+                        { id: 4, text: 'Which empire built the Colosseum?', options: ['Greek', 'Egyptian', 'Roman', 'Ottoman'], correct: 2 },
+                        { id: 5, text: 'In what year did Columbus discover America?', options: ['1490', '1491', '1492', '1493'], correct: 2 },
+                        { id: 6, text: 'Who was the first emperor of Rome?', options: ['Julius Caesar', 'Augustus', 'Nero', 'Titus'], correct: 1 },
+                        { id: 7, text: 'What year did the Titanic sink?', options: ['1911', '1912', '1913', '1914'], correct: 1 },
+                        { id: 8, text: 'Which country hosted the 2016 Olympics?', options: ['China', 'Brazil', 'UK', 'Greece'], correct: 1 },
+                        { id: 9, text: 'Who wrote the Declaration of Independence?', options: ['Benjamin Franklin', 'John Adams', 'Thomas Jefferson', 'George Washington'], correct: 2 },
+                        { id: 10, text: 'What year did the Great Fire of London occur?', options: ['1665', '1666', '1667', '1668'], correct: 1 }
+                    ]
+                },
+                {
+                    id: 4,
+                    title: 'Geography Challenge',
+                    description: 'World geography, capitals, and landmarks',
+                    createdBy: 'admin',
+                    questions: [
+                        { id: 1, text: 'What is the largest country by area?', options: ['Canada', 'USA', 'Russia', 'China'], correct: 2 },
+                        { id: 2, text: 'What is the capital of Japan?', options: ['Osaka', 'Tokyo', 'Kyoto', 'Nagasaki'], correct: 1 },
+                        { id: 3, text: 'Which is the longest river in Africa?', options: ['Zambezi', 'Nile', 'Congo', 'Niger'], correct: 1 },
+                        { id: 4, text: 'What is the capital of Australia?', options: ['Sydney', 'Melbourne', 'Canberra', 'Brisbane'], correct: 2 },
+                        { id: 5, text: 'Which country has the most islands?', options: ['Indonesia', 'Philippines', 'Canada', 'Sweden'], correct: 2 },
+                        { id: 6, text: 'What is the capital of Brazil?', options: ['Rio de Janeiro', 'São Paulo', 'Brasília', 'Salvador'], correct: 2 },
+                        { id: 7, text: 'Mount Everest is located in which mountain range?', options: ['Alps', 'Andes', 'Himalayas', 'Rockies'], correct: 2 },
+                        { id: 8, text: 'What is the capital of Egypt?', options: ['Alexandria', 'Cairo', 'Giza', 'Luxor'], correct: 1 },
+                        { id: 9, text: 'Which desert is the largest in the world?', options: ['Gobi', 'Kalahari', 'Sahara', 'Arabian'], correct: 2 },
+                        { id: 10, text: 'What is the capital of Canada?', options: ['Toronto', 'Vancouver', 'Montreal', 'Ottawa'], correct: 3 }
+                    ]
+                },
+                {
+                    id: 5,
+                    title: 'Technology Trivia',
+                    description: 'Tech innovation and computer science',
+                    createdBy: 'admin',
+                    questions: [
+                        { id: 1, text: 'Who is the founder of Microsoft?', options: ['Steve Jobs', 'Bill Gates', 'Mark Zuckerberg', 'Larry Page'], correct: 1 },
+                        { id: 2, text: 'What does CPU stand for?', options: ['Central Processing Unit', 'Computer Personal Unit', 'Central Performance Unit', 'Control Processing Unit'], correct: 0 },
+                        { id: 3, text: 'Who invented the World Wide Web?', options: ['Bill Gates', 'Steve Jobs', 'Tim Berners-Lee', 'Alan Turing'], correct: 2 },
+                        { id: 4, text: 'What does AI stand for?', options: ['Automated Intelligence', 'Artificial Intelligence', 'Applied Integration', 'Advanced Imaging'], correct: 1 },
+                        { id: 5, text: 'Which company developed Python?', options: ['Google', 'Facebook', 'Guido van Rossum', 'Microsoft'], correct: 2 },
+                        { id: 6, text: 'What year was the first iPhone released?', options: ['2005', '2006', '2007', '2008'], correct: 2 },
+                        { id: 7, text: 'Who founded Facebook?', options: ['Bill Gates', 'Steve Jobs', 'Mark Zuckerberg', 'Larry Page'], correct: 2 },
+                        { id: 8, text: 'What does HTML stand for?', options: ['Hyper Text Markup Language', 'High Tech Modern Language', 'Home Tool Markup Language', 'Hyper Technical Modern Logic'], correct: 0 },
+                        { id: 9, text: 'Who is the founder of Tesla?', options: ['Steve Jobs', 'Bill Gates', 'Elon Musk', 'Jeff Bezos'], correct: 2 },
+                        { id: 10, text: 'What year was Java created?', options: ['1992', '1994', '1995', '1996'], correct: 2 }
+                    ]
+                },
+                {
+                    id: 6,
+                    title: 'Literature',
+                    description: 'Classic and contemporary literature',
+                    createdBy: 'admin',
+                    questions: [
+                        { id: 1, text: "Who wrote 'Romeo and Juliet'?", options: ['Jane Austen', 'William Shakespeare', 'Charles Dickens', 'Mark Twain'], correct: 1 },
+                        { id: 2, text: "Who wrote '1984'?", options: ['George Orwell', 'Aldous Huxley', 'J.K. Rowling', 'Ernest Hemingway'], correct: 0 },
+                        { id: 3, text: "Who is the author of 'Harry Potter'?", options: ['J.K. Rowling', 'Stephen King', 'George R.R. Martin', 'J.R.R. Tolkien'], correct: 0 },
+                        { id: 4, text: "Who wrote 'Pride and Prejudice'?", options: ['Charlotte Brontë', 'Jane Austen', 'Emily Brontë', 'George Eliot'], correct: 1 },
+                        { id: 5, text: "Who wrote 'The Great Gatsby'?", options: ['Ernest Hemingway', 'F. Scott Fitzgerald', 'Mark Twain', 'John Steinbeck'], correct: 1 },
+                        { id: 6, text: "Who wrote 'Moby Dick'?", options: ['Mark Twain', 'Herman Melville', 'Nathaniel Hawthorne', 'Walt Whitman'], correct: 1 },
+                        { id: 7, text: "Who wrote 'The Catcher in the Rye'?", options: ['J.D. Salinger', 'Kurt Vonnegut', 'Philip Roth', 'Don DeLillo'], correct: 0 },
+                        { id: 8, text: "Who wrote 'Wuthering Heights'?", options: ['Jane Austen', 'Charlotte Brontë', 'Emily Brontë', 'George Eliot'], correct: 2 },
+                        { id: 9, text: "Who wrote 'Jane Eyre'?", options: ['Jane Austen', 'Charlotte Brontë', 'Emily Brontë', 'George Eliot'], correct: 1 },
+                        { id: 10, text: "Who wrote 'To Kill a Mockingbird'?", options: ['Harper Lee', 'Margaret Mitchell', 'Carson McCullers', 'Flannery O\'Connor'], correct: 0 }
+                    ]
+                },
+                {
+                    id: 7,
+                    title: 'Sports Quiz',
+                    description: 'Sports facts and athletic trivia',
+                    createdBy: 'admin',
+                    questions: [
+                        { id: 1, text: 'How many players are on a soccer team?', options: ['9', '10', '11', '12'], correct: 2 },
+                        { id: 2, text: 'How many minutes in a basketball game quarter?', options: ['12', '10', '15', '20'], correct: 0 },
+                        { id: 3, text: 'How many holes in a golf course?', options: ['9', '18', '27', '36'], correct: 1 },
+                        { id: 4, text: 'How many players on a basketball team on court?', options: ['4', '5', '6', '7'], correct: 1 },
+                        { id: 5, text: 'What sport is known as "The Beautiful Game"?', options: ['Basketball', 'Tennis', 'Soccer', 'Baseball'], correct: 2 },
+                        { id: 6, text: 'How many innings in a baseball game?', options: ['7', '8', '9', '10'], correct: 2 },
+                        { id: 7, text: 'What is the maximum break in snooker?', options: ['120', '147', '180', '200'], correct: 1 },
+                        { id: 8, text: 'How many rackets does a tennis player use?', options: ['1', '2', '3', 'Varies'], correct: 0 },
+                        { id: 9, text: 'What is the height of a basketball hoop?', options: ['8 feet', '9 feet', '10 feet', '11 feet'], correct: 2 },
+                        { id: 10, text: 'How many sets to win Wimbledon tennis?', options: ['2', '3', '4', '5'], correct: 1 }
+                    ]
+                },
+                {
+                    id: 8,
+                    title: 'Art & Culture',
+                    description: 'Art history and cultural knowledge',
+                    createdBy: 'admin',
+                    questions: [
+                        { id: 1, text: 'Who painted the Mona Lisa?', options: ['Van Gogh', 'Leonardo da Vinci', 'Michelangelo', 'Raphael'], correct: 1 },
+                        { id: 2, text: 'Who sculpted David?', options: ['Donatello', 'Michelangelo', 'Bernini', 'Rodin'], correct: 1 },
+                        { id: 3, text: 'Which artist cut off his own ear?', options: ['Picasso', 'Van Gogh', 'Dali', 'Monet'], correct: 1 },
+                        { id: 4, text: 'Who is known for surrealism?', options: ['Pablo Picasso', 'Salvador Dalí', 'Andy Warhol', 'Jackson Pollock'], correct: 1 },
+                        { id: 5, text: 'What art movement was Van Gogh part of?', options: ['Impressionism', 'Cubism', 'Post-Impressionism', 'Expressionism'], correct: 2 },
+                        { id: 6, text: 'Who painted The Starry Night?', options: ['Monet', 'Van Gogh', 'Cézanne', 'Gauguin'], correct: 1 },
+                        { id: 7, text: 'What is the Sistine Chapel famous for?', options: ['Sculptures', 'Ceiling Frescoes', 'Stained Glass', 'Mosaics'], correct: 1 },
+                        { id: 8, text: 'Who created the abstract movement Cubism?', options: ['Matisse', 'Braque & Picasso', 'Mondrian', 'Kandinsky'], correct: 1 },
+                        { id: 9, text: 'What color is most associated with Rothko\'s work?', options: ['Blue', 'Red', 'Varies by period', 'Green'], correct: 2 },
+                        { id: 10, text: 'Who is the Pop Art pioneer?', options: ['Jackson Pollock', 'Andy Warhol', 'Roy Lichtenstein', 'David Hockney'], correct: 1 }
+                    ]
+                },
+                {
+                    id: 9,
+                    title: 'Business Basics',
+                    description: 'Business and economics fundamentals',
+                    createdBy: 'admin',
+                    questions: [
+                        { id: 1, text: 'What does GDP stand for?', options: ['Gross Domestic Product', 'General Debt Payment', 'Global Development Plan', 'Gross Development Product'], correct: 0 },
+                        { id: 2, text: 'What is a stock?', options: ['Physical good', 'Ownership share of company', 'Debt instrument', 'Currency'], correct: 1 },
+                        { id: 3, text: 'Who is the richest person in the world?', options: ['Bill Gates', 'Warren Buffett', 'Elon Musk', 'Jeff Bezos'], correct: 2 },
+                        { id: 4, text: 'What is inflation?', options: ['Deflation', 'Rising prices', 'Currency strength', 'Stock growth'], correct: 1 },
+                        { id: 5, text: 'What does ROI stand for?', options: ['Return on Interest', 'Retained Operating Income', 'Return on Investment', 'Revenue Operating Index'], correct: 2 },
+                        { id: 6, text: 'What is a bond?', options: ['Stock certificate', 'Loan agreement', 'Business contract', 'Insurance policy'], correct: 1 },
+                        { id: 7, text: 'What does NYSE stand for?', options: ['New York Stock Exchange', 'National Yearly Securities Exchange', 'New Yield Stock Enterprise', 'National Youth Securities Exchange'], correct: 0 },
+                        { id: 8, text: 'Who founded Amazon?', options: ['Bill Gates', 'Steve Jobs', 'Jeff Bezos', 'Elon Musk'], correct: 2 },
+                        { id: 9, text: 'What is a startup?', options: ['Initial stock offering', 'New company with high growth potential', 'First trade of the day', 'Business opening ceremony'], correct: 1 },
+                        { id: 10, text: 'What does CEO stand for?', options: ['Chief Executive Officer', 'Central Economic Operations', 'Corporate Executive Official', 'Chief Engineering Officer'], correct: 0 }
+                    ]
+                },
+                {
+                    id: 10,
+                    title: 'Health & Medicine',
+                    description: 'Health, medicine, and human biology',
+                    createdBy: 'admin',
+                    questions: [
+                        { id: 1, text: 'How many bones does an adult human have?', options: ['186', '206', '226', '246'], correct: 1 },
+                        { id: 2, text: 'What is the largest organ in the human body?', options: ['Brain', 'Heart', 'Liver', 'Skin'], correct: 3 },
+                        { id: 3, text: 'How many chambers does the human heart have?', options: ['2', '3', '4', '5'], correct: 2 },
+                        { id: 4, text: 'What blood type is universal donor?', options: ['A', 'B', 'AB', 'O'], correct: 3 },
+                        { id: 5, text: 'What vitamin is produced when exposed to sunlight?', options: ['Vitamin A', 'Vitamin B', 'Vitamin C', 'Vitamin D'], correct: 3 },
+                        { id: 6, text: 'How many muscles are in the human body?', options: ['206', '346', '646', '806'], correct: 2 },
+                        { id: 7, text: 'What is the normal body temperature?', options: ['36°C', '37°C', '38°C', '39°C'], correct: 1 },
+                        { id: 8, text: 'What is the powerhouse of the cell?', options: ['Nucleus', 'Ribosome', 'Mitochondria', 'Golgi apparatus'], correct: 2 },
+                        { id: 9, text: 'How many teeth does an adult have?', options: ['28', '30', '32', '34'], correct: 2 },
+                        { id: 10, text: 'What is the hardest substance in the human body?', options: ['Bone', 'Tooth enamel', 'Cartilage', 'Nail'], correct: 1 }
+                    ]
+                }
+            ];
+
+            quizzes = defaultQuizzes;
+            saveData();
+        }
+
+        // Load data from localStorage
+        function loadData() {
+            const savedUsers = localStorage.getItem('quizUsers');
+            const savedQuizzes = localStorage.getItem('quizzes');
+            const savedScores = localStorage.getItem('userScores');
+            const savedMessages = localStorage.getItem('messages');
+            const savedRequests = localStorage.getItem('adminRequests');
+            const dataVersion = localStorage.getItem('quizDataVersion');
+
+            if (savedUsers) users = JSON.parse(savedUsers);
+            if (savedQuizzes) quizzes = JSON.parse(savedQuizzes);
+            if (savedScores) userScores = JSON.parse(savedScores);
+            if (savedMessages) messages = JSON.parse(savedMessages);
+            if (savedRequests) adminRequests = JSON.parse(savedRequests);
+
+            // Check if quizzes are outdated or have placeholder options - if so, reinitialize
+            let needsReinit = quizzes.length === 0 || dataVersion !== 'v2';
+            if (!needsReinit && quizzes.length > 0) {
+                // Check if first quiz has real options (not generic "Option A, B, C, D")
+                const firstQ = quizzes[0]?.questions?.[0];
+                if (firstQ && (firstQ.options[0] === 'Option A' || firstQ.options.join(',') === 'Option A,Option B,Option C,Option D')) {
+                    needsReinit = true;
+                }
+            }
+
+            if (needsReinit) {
+                initializeDefaultQuizzes();
+            }
+            
+            // Enrich placeholder quizzes with themed content where applicable
+            enrichQuizzes();
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('quizUsers', JSON.stringify(users));
+            localStorage.setItem('quizzes', JSON.stringify(quizzes));
+            localStorage.setItem('userScores', JSON.stringify(userScores));
+            localStorage.setItem('messages', JSON.stringify(messages));
+            localStorage.setItem('adminRequests', JSON.stringify(adminRequests));
+            localStorage.setItem('quizDataVersion', 'v2');
+        }
+
+        // Auth Functions
+        function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const user = users.find(u => u.username === username && u.password === password);
+            if (user) {
+                currentUser = user;
+                showScreen('dashboardScreen');
+                updateDashboard();
+                updateHeader();
+                alert('Welcome!\n\n👑 Chimzy is the owner of this platform.\n📧 Email: chimzyeze6@gmail.com\n\nFor support and admin requests, contact the owner.');
+            } else {
+                alert('Invalid credentials');
+            }
+        }
+
+        function signup() {
+            const username = document.getElementById('signupUsername').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+
+            if (users.find(u => u.username === username)) {
+                alert('Username already exists');
+                return;
+            }
+
+            const newUser = {
+                id: users.length + 1,
+                username: username,
+                email: email,
+                password: password,
+                role: 'user'
+            };
+
+            users.push(newUser);
+            saveData();
+            alert('Account created! Please login.');
+            toggleForm();
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('signupUsername').value = '';
+            document.getElementById('signupEmail').value = '';
+            document.getElementById('signupPassword').value = '';
+            showScreen('loginScreen');
+        }
+
+        function toggleForm() {
+            document.getElementById('loginForm').style.display = 
+                document.getElementById('loginForm').style.display === 'none' ? 'block' : 'none';
+            document.getElementById('signupForm').style.display = 
+                document.getElementById('signupForm').style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Screen Management
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            document.getElementById('header').style.display = screenId === 'loginScreen' ? 'none' : 'block';
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+            document.getElementById(tabName + 'Tab').style.display = 'block';
+
+            if (tabName === 'myQuizzes') {
+                displayMyQuizzes();
+            } else if (tabName === 'takeQuiz') {
+                displayAvailableQuizzes();
+            } else if (tabName === 'messages') {
+                displayMessages();
+            } else if (tabName === 'adminPanel') {
+                displayAdminPanel();
+            } else if (tabName === 'superAdmin') {
+                displaySuperAdminPanel();
+            }
+        }
+
+        // Dashboard Update
+        function updateDashboard() {
+            const adminBtn = document.getElementById('adminBtn');
+            const superAdminBtn = document.getElementById('superAdminBtn');
+
+            // Show admin controls for admins and owner
+            if (currentUser.role === 'admin' || currentUser.username === 'Chimzy') {
+                adminBtn.style.display = 'inline-block';
+            }
+
+            // Show super admin controls for super_admin role or owner
+            if (currentUser.role === 'super_admin' || currentUser.username === 'Chimzy') {
+                superAdminBtn.style.display = 'inline-block';
+                document.getElementById('statsGrid').style.display = 'grid';
+                updateStats();
+            }
+
+            showTab('takeQuiz');
+        }
+
+        function updateHeader() {
+            let roleText = currentUser.role.replace('_', ' ').toUpperCase();
+            if (currentUser.username === 'Chimzy') {
+                roleText = '👑 OWNER';
+            }
+            document.getElementById('userDisplay').textContent = currentUser.username;
+            document.getElementById('roleDisplay').textContent = roleText;
+        }
+
+        function updateStats() {
+            document.getElementById('statUsers').textContent = users.length;
+            document.getElementById('statQuizzes').textContent = quizzes.length;
+            document.getElementById('statRequests').textContent = adminRequests.length;
+            document.getElementById('statMessages').textContent = messages.filter(m => m.to === currentUser.username).length;
+        }
+
+        // Quiz Functions
+        function displayMyQuizzes() {
+            const grid = document.getElementById('myQuizzesGrid');
+            const createBtn = document.getElementById('createQuizBtn');
+            const noPermissionText = document.getElementById('noPermissionText');
+            
+            // Check if user is admin, super_admin, or owner (Chimzy)
+            if (currentUser.role === 'admin' || currentUser.role === 'super_admin' || currentUser.username === 'Chimzy') {
+                createBtn.style.display = 'inline-block';
+                noPermissionText.style.display = 'none';
+            } else {
+                createBtn.style.display = 'none';
+                noPermissionText.style.display = 'block';
+            }
+            
+            const userQuizzes = quizzes.filter(q => q.createdBy === currentUser.username);
+
+            if (userQuizzes.length === 0) {
+                grid.innerHTML = '<p style="color: #6b7280; grid-column: 1/-1;">No quizzes created yet</p>';
+                return;
+            }
+
+            grid.innerHTML = userQuizzes.map(q => `
+                <div class="card">
+                    <h3>${q.title}</h3>
+                    <p>${q.description}</p>
+                    <p style="font-size: 0.9rem; color: #6b7280;">Questions: ${q.questions.length}</p>
+                    <div class="card-actions">
+                        <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.9rem;">Edit</button>
+                        <button class="btn btn-danger" style="padding: 0.4rem 0.8rem; font-size: 0.9rem;" onclick="deleteQuiz(${q.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function displayAvailableQuizzes() {
+            const grid = document.getElementById('availableQuizzesGrid');
+
+            if (quizzes.length === 0) {
+                grid.innerHTML = '<p style="color: #6b7280; grid-column: 1/-1;">No quizzes available</p>';
+                return;
+            }
+
+            grid.innerHTML = quizzes.map((q, idx) => {
+                const hasTaken = userScores.some(s => s.userId === currentUser.id && s.quizId === q.id);
+                const score = userScores.find(s => s.userId === currentUser.id && s.quizId === q.id);
+
+                return `
+                    <div class="card">
+                        <h3>${q.title}</h3>
+                        <p>${q.description}</p>
+                        <p style="font-size: 0.9rem; color: #6b7280;">Questions: ${q.questions.length}</p>
+                        ${hasTaken ? `<p class="badge badge-success">✓ Completed - Score: ${score.score}/${score.total}</p>` : ''}
+                        <div class="card-actions">
+                            <button class="btn" onclick="startQuiz(${idx})">Start Quiz</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function startQuiz(quizIndex) {
+            currentQuizIndex = quizIndex;
+            currentQuestionIndex = 0;
+            // create a session copy of questions and shuffle to randomize order
+            sessionQuestions = JSON.parse(JSON.stringify(quizzes[quizIndex].questions));
+            shuffleArray(sessionQuestions);
+            userAnswers = new Array(sessionQuestions.length).fill(-1);
+            showScreen('quizScreen');
+            displayQuestion();
+        }
+
+        function displayQuestion() {
+            const quiz = quizzes[currentQuizIndex];
+            const question = sessionQuestions[currentQuestionIndex];
+            const totalQuestions = sessionQuestions.length;
+
+            document.getElementById('questionText').textContent = `${currentQuestionIndex + 1}. ${question.text}`;
+            document.getElementById('progressFill').style.width = ((currentQuestionIndex + 1) / totalQuestions * 100) + '%';
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = question.options.map((opt, idx) => `
+                <label class="option">
+                    <input type="radio" name="answer" value="${idx}" onchange="selectAnswer(${idx})">
+                    ${opt}
+                </label>
+            `).join('');
+
+            if (userAnswers[currentQuestionIndex] !== -1) {
+                const el = document.querySelector(`input[name="answer"][value="${userAnswers[currentQuestionIndex]}"]`);
+                if (el) el.checked = true;
+            }
+
+            document.getElementById('submitBtn').style.display = 
+                currentQuestionIndex === totalQuestions - 1 ? 'inline-block' : 'none';
+        }
+
+        function selectAnswer(optionIndex) {
+            userAnswers[currentQuestionIndex] = optionIndex;
+        }
+
+        function nextQuestion() {
+            const quiz = quizzes[currentQuizIndex];
+            if (currentQuestionIndex < quiz.questions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+            }
+        }
+
+        function goBack() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion();
+            }
+        }
+
+        function submitQuiz() {
+            const quiz = quizzes[currentQuizIndex];
+            let correctAnswers = 0;
+
+            sessionQuestions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.correct) {
+                    correctAnswers++;
+                }
+            });
+
+            const score = {
+                userId: currentUser.id,
+                quizId: quiz.id,
+                username: currentUser.username,
+                quizTitle: quiz.title,
+                score: correctAnswers,
+                total: quiz.questions.length,
+                percentage: Math.round((correctAnswers / quiz.questions.length) * 100),
+                dateTaken: new Date().toLocaleDateString()
+            };
+
+            userScores.push(score);
+            
+            // Send score notification to Chimzy (owner)
+            const scoreMessage = {
+                from: currentUser.username,
+                to: 'Chimzy',
+                subject: `📊 Quiz Score: ${quiz.title}`,
+                message: `${currentUser.username} scored ${correctAnswers}/${quiz.questions.length} (${score.percentage}%) on "${quiz.title}" on ${score.dateTaken}. Email: ${currentUser.email}`,
+                date: new Date().toLocaleDateString(),
+                email: SUPER_ADMIN_EMAIL
+            };
+            messages.push(scoreMessage);
+            
+            saveData();
+
+            document.getElementById('scoreCircle').textContent = score.percentage + '%';
+            document.getElementById('resultsText').innerHTML = `
+                <p>You scored <strong>${correctAnswers}/${quiz.questions.length}</strong></p>
+                <p>Percentage: <strong>${score.percentage}%</strong></p>
+            `;
+
+            showScreen('resultsScreen');
+        }
+
+        function backToDashboard() {
+            showScreen('dashboardScreen');
+            showTab('takeQuiz');
+        }
+
+        // Admin Functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            if (modalId === 'quizModal') {
+                document.getElementById('questionsContainer').innerHTML = '';
+                addQuestion();
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function addQuestion() {
+            const container = document.getElementById('questionsContainer');
+            const questionNum = container.children.length + 1;
+
+            const questionHTML = `
+                <div class="form-group" style="background: #f3f4f6; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <label>Question ${questionNum}</label>
+                    <input type="text" placeholder="Question text" class="question-text-${questionNum}">
+                    
+                    <div style="margin-top: 0.5rem;">
+                        <input type="text" placeholder="Option A" class="question-opt1-${questionNum}" style="display: block; margin: 0.5rem 0;">
+                        <input type="text" placeholder="Option B" class="question-opt2-${questionNum}" style="display: block; margin: 0.5rem 0;">
+                        <input type="text" placeholder="Option C" class="question-opt3-${questionNum}" style="display: block; margin: 0.5rem 0;">
+                        <input type="text" placeholder="Option D" class="question-opt4-${questionNum}" style="display: block; margin: 0.5rem 0;">
+                    </div>
+                    
+                    <label style="margin-top: 0.5rem;">Correct answer:</label>
+                    <select class="question-correct-${questionNum}">
+                        <option value="0">Option A</option>
+                        <option value="1">Option B</option>
+                        <option value="2">Option C</option>
+                        <option value="3">Option D</option>
+                    </select>
+                </div>
+            `;
+
+            container.innerHTML += questionHTML;
+        }
+
+        function saveQuiz() {
+            const title = document.getElementById('quizTitle').value;
+            const description = document.getElementById('quizDescription').value;
+
+            if (!title || !description) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const container = document.getElementById('questionsContainer');
+            const questions = [];
+
+            for (let i = 0; i < container.children.length; i++) {
+                const num = i + 1;
+                const text = document.querySelector(`.question-text-${num}`).value;
+                const opt1 = document.querySelector(`.question-opt1-${num}`).value;
+                const opt2 = document.querySelector(`.question-opt2-${num}`).value;
+                const opt3 = document.querySelector(`.question-opt3-${num}`).value;
+                const opt4 = document.querySelector(`.question-opt4-${num}`).value;
+                const correct = parseInt(document.querySelector(`.question-correct-${num}`).value);
+
+                if (!text || !opt1 || !opt2 || !opt3 || !opt4) {
+                    alert('Please fill all question fields');
+                    return;
+                }
+
+                questions.push({
+                    id: i + 1,
+                    text: text,
+                    options: [opt1, opt2, opt3, opt4],
+                    correct: correct
+                });
+            }
+
+            const newQuiz = {
+                id: quizzes.length + 1,
+                title: title,
+                description: description,
+                createdBy: currentUser.username,
+                questions: questions
+            };
+
+            quizzes.push(newQuiz);
+            saveData();
+            closeModal('quizModal');
+            alert('Quiz created successfully!');
+            displayMyQuizzes();
+        }
+
+        function deleteQuiz(quizId) {
+            if (confirm('Are you sure you want to delete this quiz?')) {
+                quizzes = quizzes.filter(q => q.id !== quizId);
+                saveData();
+                displayMyQuizzes();
+            }
+        }
+
+        function displayAdminPanel() {
+            const adminQuizzesTable = document.getElementById('adminQuizzesTable');
+            const adminQuizzesBody = document.getElementById('adminQuizzesBody');
+            const userQuizzes = quizzes.filter(q => q.createdBy === currentUser.username);
+
+            if (userQuizzes.length === 0) {
+                adminQuizzesTable.style.display = 'none';
+                document.getElementById('noAdminQuizzesText').style.display = 'block';
+                return;
+            }
+
+            adminQuizzesTable.style.display = 'table';
+            document.getElementById('noAdminQuizzesText').style.display = 'none';
+
+            adminQuizzesBody.innerHTML = userQuizzes.map(q => {
+                const participants = userScores.filter(s => s.quizId === q.id).length;
+                return `
+                    <tr>
+                        <td>${q.title}</td>
+                        <td>${q.questions.length}</td>
+                        <td>${participants}</td>
+                        <td>
+                            <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.9rem;" onclick="viewQuizResults(${q.id})">View Results</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function viewQuizResults(quizId) {
+            const quiz = quizzes.find(q => q.id === quizId);
+            const results = userScores.filter(s => s.quizId === quizId);
+
+            alert(`Results for "${quiz.title}":\n\n${results.map(r => `${r.username}: ${r.score}/${r.total} (${r.percentage}%)`).join('\n')}`);
+        }
+
+        // Shuffle helper
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+        }
+
+        // Enrich placeholder quizzes with simple themed questions
+        function enrichQuizzes() {
+            if (!quizzes || quizzes.length === 0) return;
+
+            const themedPools = {
+                'history': [
+                    {q: 'Who was the first president of the United States?', opts: ['George Washington','Abraham Lincoln','John Adams','Thomas Jefferson'], a:0},
+                    {q: 'In which year did World War II end?', opts: ['1945','1939','1918','1963'], a:0},
+                    {q: 'Which empire built the Colosseum?', opts: ['Roman','Greek','Ottoman','Persian'], a:0},
+                    {q: 'When did the Titanic sink?', opts: ['1912','1905','1920','1898'], a:0},
+                    {q: 'Who was Napoleon Bonaparte?', opts: ['French Emperor','Russian General','German King','Spanish Leader'], a:0},
+                    {q: 'What year did Columbus discover America?', opts: ['1492','1500','1485','1510'], a:0},
+                    {q: 'Which civilization built Machu Picchu?', opts: ['Inca','Aztec','Maya','Moche'], a:0},
+                    {q: 'Who signed the Declaration of Independence?', opts: ['Thomas Jefferson','George Washington','John Adams','Benjamin Franklin'], a:0},
+                    {q: 'What year did the Berlin Wall fall?', opts: ['1989','1987','1990','1991'], a:0},
+                    {q: 'Who was Cleopatra?', opts: ['Egyptian Queen','Greek Philosopher','Roman Empress','Nubian Ruler'], a:0},
+                    {q: 'When did the Renaissance begin?', opts: ['14th century','12th century','16th century','10th century'], a:0},
+                    {q: 'Who invented the printing press?', opts: ['Johannes Gutenberg','Movable type inventor','Chinese scholar','European craftsman'], a:0}
+                ],
+                'science': [
+                    {q: 'What is the chemical symbol for water?', opts: ['H2O','O2','CO2','NaCl'], a:0},
+                    {q: 'What force keeps us on the ground?', opts: ['Gravity','Friction','Magnetism','Electricity'], a:0},
+                    {q: 'What planet is known as the Red Planet?', opts: ['Mars','Venus','Jupiter','Saturn'], a:0},
+                    {q: 'What is the speed of light?', opts: ['3×10^8 m/s','2×10^8 m/s','4×10^8 m/s','5×10^8 m/s'], a:0},
+                    {q: 'What element has the symbol Au?', opts: ['Gold','Silver','Aluminum','Copper'], a:0},
+                    {q: 'How many bones in an adult human?', opts: ['206','186','226','246'], a:0},
+                    {q: 'What is photosynthesis?', opts: ['Plant food-making process','Animal digestion','Bacterial reproduction','Fungal growth'], a:0},
+                    {q: 'What is the powerhouse of the cell?', opts: ['Mitochondria','Nucleus','Ribosome','Chloroplast'], a:0},
+                    {q: 'What does DNA stand for?', opts: ['Deoxyribonucleic Acid','Dynamic Nucleic Arrangement','Distributed Nitrogen Atoms','Diagonal Nuclear Assembly'], a:0},
+                    {q: 'What is the boiling point of water?', opts: ['100°C','90°C','110°C','120°C'], a:0},
+                    {q: 'How many electrons does oxygen have?', opts: ['8','6','10','12'], a:0},
+                    {q: 'What is the SI unit of force?', opts: ['Newton','Joule','Watt','Pascal'], a:0}
+                ],
+                'geography': [
+                    {q: 'What is the largest continent?', opts: ['Asia','Africa','Europe','Antarctica'], a:0},
+                    {q: 'Which country has the most population?', opts: ['China','India','USA','Indonesia'], a:0},
+                    {q: 'What is the largest ocean?', opts: ['Pacific','Atlantic','Indian','Arctic'], a:0},
+                    {q: 'What is the capital of Japan?', opts: ['Tokyo','Osaka','Kyoto','Nagoya'], a:0},
+                    {q: 'Which is the longest river in Africa?', opts: ['Nile','Congo','Zambezi','Niger'], a:0},
+                    {q: 'What is the smallest country?', opts: ['Vatican City','Monaco','Liechtenstein','San Marino'], a:0},
+                    {q: 'What is the capital of Brazil?', opts: ['Brasília','Rio de Janeiro','São Paulo','Salvador'], a:0},
+                    {q: 'Which mountain range has Mount Everest?', opts: ['Himalayas','Andes','Rockies','Alps'], a:0},
+                    {q: 'What is the largest desert?', opts: ['Sahara','Gobi','Arabian','Kalahari'], a:0},
+                    {q: 'How many continents exist?', opts: ['7','6','5','8'], a:0},
+                    {q: 'What is the capital of Australia?', opts: ['Canberra','Sydney','Melbourne','Brisbane'], a:0},
+                    {q: 'Which country has the most islands?', opts: ['Sweden','Indonesia','Canada','Philippines'], a:0}
+                ],
+                'technology': [
+                    {q: 'Who co-founded Microsoft?', opts: ['Bill Gates','Steve Jobs','Elon Musk','Larry Page'], a:0},
+                    {q: 'What does CPU stand for?', opts: ['Central Processing Unit','Computer Personal Unit','Central Performance Unit','Control Processing Unit'], a:0},
+                    {q: 'Who invented the World Wide Web?', opts: ['Tim Berners-Lee','Bill Gates','Steve Jobs','Alan Turing'], a:0},
+                    {q: 'What does AI stand for?', opts: ['Artificial Intelligence','Automated Integration','Advanced Imaging','Applied Informatics'], a:0},
+                    {q: 'What year was the first iPhone released?', opts: ['2007','2006','2008','2009'], a:0},
+                    {q: 'What does HTML stand for?', opts: ['Hyper Text Markup Language','High Tech Modern Language','Home Tool Markup Language','Hyper Technical Modern Logic'], a:0},
+                    {q: 'Who founded Tesla?', opts: ['Elon Musk','Steve Jobs','Larry Page','Bill Gates'], a:0},
+                    {q: 'What year was Java created?', opts: ['1995','1994','1996','1997'], a:0},
+                    {q: 'What does API stand for?', opts: ['Application Programming Interface','Advanced Programming Integration','Applied Process Index','Automated Programming Interface'], a:0},
+                    {q: 'Who founded Amazon?', opts: ['Jeff Bezos','Bill Gates','Steve Jobs','Elon Musk'], a:0},
+                    {q: 'What does GPU stand for?', opts: ['Graphics Processing Unit','General Performance Unit','Global Processor Union','Graphics Programming Unit'], a:0},
+                    {q: 'What is open-source software?', opts: ['Freely available code','Paid proprietary','Encrypted software','Restricted access'], a:0}
+                ],
+                'literature': [
+                    {q: 'Who wrote "Romeo and Juliet"?', opts: ['William Shakespeare','Jane Austen','Charles Dickens','Mark Twain'], a:0},
+                    {q: 'Who wrote "1984"?', opts: ['George Orwell','Aldous Huxley','J.K. Rowling','Ernest Hemingway'], a:0},
+                    {q: 'Who is the author of Harry Potter?', opts: ['J.K. Rowling','Stephen King','George R.R. Martin','J.R.R. Tolkien'], a:0},
+                    {q: 'Who wrote "Pride and Prejudice"?', opts: ['Jane Austen','Charlotte Brontë','Emily Brontë','George Eliot'], a:0},
+                    {q: 'Who wrote "The Great Gatsby"?', opts: ['F. Scott Fitzgerald','Ernest Hemingway','Mark Twain','John Steinbeck'], a:0},
+                    {q: 'Who wrote "Moby Dick"?', opts: ['Herman Melville','Mark Twain','Nathaniel Hawthorne','Walt Whitman'], a:0},
+                    {q: 'Who wrote "Wuthering Heights"?', opts: ['Emily Brontë','Jane Austen','Charlotte Brontë','George Eliot'], a:0},
+                    {q: 'Who wrote "Jane Eyre"?', opts: ['Charlotte Brontë','Jane Austen','Emily Brontë','George Eliot'], a:0},
+                    {q: 'Who wrote "To Kill a Mockingbird"?', opts: ['Harper Lee','Margaret Mitchell','Carson McCullers','Flannery O\'Connor'], a:0},
+                    {q: 'Who wrote "Dracula"?', opts: ['Bram Stoker','Mary Shelley','Edgar Allan Poe','H.G. Wells'], a:0},
+                    {q: 'Who wrote "Frankenstein"?', opts: ['Mary Shelley','Bram Stoker','Edgar Allan Poe','H.G. Wells'], a:0},
+                    {q: 'Who wrote "The Odyssey"?', opts: ['Homer','Hesiod','Plato','Socrates'], a:0}
+                ],
+                'sports': [
+                    {q: 'How many players on a soccer team?', opts: ['11','10','9','12'], a:0},
+                    {q: 'How many minutes in a standard basketball game quarter?', opts: ['12','10','15','20'], a:0},
+                    {q: 'How many holes in a golf course?', opts: ['18','9','27','36'], a:0},
+                    {q: 'How many players on a basketball court per team?', opts: ['5','6','7','4'], a:0},
+                    {q: 'What sport is called The Beautiful Game?', opts: ['Soccer','Basketball','Tennis','Baseball'], a:0},
+                    {q: 'How many innings in baseball?', opts: ['9','7','8','10'], a:0},
+                    {q: 'What is the height of a basketball hoop?', opts: ['10 feet','9 feet','8 feet','11 feet'], a:0},
+                    {q: 'How many sets to win Wimbledon singles?', opts: ['2','3','4','5'], a:0},
+                    {q: 'How many players on an ice hockey team on ice?', opts: ['6','5','7','4'], a:0},
+                    {q: 'How many players in American football?', opts: ['11','10','12','9'], a:0},
+                    {q: 'What is tennis scoring (points)?', opts: ['15, 30, 40','10, 20, 30','1, 2, 3','5, 10, 15'], a:0},
+                    {q: 'How long is a Olympic swimming pool?', opts: ['50 meters','25 meters','100 meters','75 meters'], a:0}
+                ],
+                'art': [
+                    {q: 'Who painted the Mona Lisa?', opts: ['Leonardo da Vinci','Van Gogh','Picasso','Rembrandt'], a:0},
+                    {q: 'Who sculpted David?', opts: ['Michelangelo','Donatello','Bernini','Rodin'], a:0},
+                    {q: 'Which artist cut off his ear?', opts: ['Vincent van Gogh','Pablo Picasso','Salvador Dalí','Henri de Toulouse-Lautrec'], a:0},
+                    {q: 'Who is known for Surrealism?', opts: ['Salvador Dalí','Pablo Picasso','Andy Warhol','Jackson Pollock'], a:0},
+                    {q: 'Who painted The Starry Night?', opts: ['Vincent van Gogh','Claude Monet','Paul Cézanne','Paul Gauguin'], a:0},
+                    {q: 'Who pioneered Cubism?', opts: ['Pablo Picasso','Henri Matisse','Piet Mondrian','Wassily Kandinsky'], a:0},
+                    {q: 'Who is the Pop Art pioneer?', opts: ['Andy Warhol','Jackson Pollock','Roy Lichtenstein','David Hockney'], a:0},
+                    {q: 'What art movement was Van Gogh part of?', opts: ['Post-Impressionism','Impressionism','Cubism','Expressionism'], a:0},
+                    {q: 'Who painted The Night Watch?', opts: ['Rembrandt','Caravaggio','Johannes Vermeer','Frans Hals'], a:0},
+                    {q: 'What is the Sistine Chapel famous for?', opts: ['Ceiling Frescoes','Sculptures','Stained Glass','Mosaics'], a:0},
+                    {q: 'Who created the composition technique of Abstractionism?', opts: ['Wassily Kandinsky','Piet Mondrian','Joan Mitchell','Mark Rothko'], a:0},
+                    {q: 'Who was the famous Mexican muralist?', opts: ['Diego Rivera','Frida Kahlo','Rufino Tamayo','David Alfaro Siqueiros'], a:0}
+                ],
+                'business': [
+                    {q: 'What does GDP stand for?', opts: ['Gross Domestic Product','General Debt Payment','Global Development Plan','Gross Development Product'], a:0},
+                    {q: 'What is a stock?', opts: ['Ownership share in a company','Debt instrument','Physical commodity','Currency'], a:0},
+                    {q: 'What does ROI stand for?', opts: ['Return on Investment','Return on Interest','Retained Operating Income','Revenue Operating Index'], a:0},
+                    {q: 'What is a bond?', opts: ['Debt instrument','Stock certificate','Business contract','Insurance policy'], a:0},
+                    {q: 'What does NYSE stand for?', opts: ['New York Stock Exchange','National Yearly Securities Exchange','New Yield Stock Enterprise','National Youth Securities Exchange'], a:0},
+                    {q: 'What is inflation?', opts: ['Rising prices over time','Deflation','Currency strength','Stock growth'], a:0},
+                    {q: 'What is a startup?', opts: ['New business with high growth potential','Initial stock offering','First trade of the day','Business opening ceremony'], a:0},
+                    {q: 'What does CEO stand for?', opts: ['Chief Executive Officer','Central Economic Operations','Corporate Executive Official','Chief Engineering Officer'], a:0},
+                    {q: 'What is an IPO?', opts: ['Initial Public Offering','Initial Price Offer','Immediate Processing Order','International Price Organization'], a:0},
+                    {q: 'What is a dividend?', opts: ['Profit share paid to shareholders','Debt obligation','Tax write-off','Business loss'], a:0},
+                    {q: 'What does NASDAQ stand for?', opts: ['National Association of Securities Dealers Automated Quotations','National Securities and Derivatives Association','New American Stock and Dividend Exchange','National Accounting and Stock Dealer Exchange'], a:0},
+                    {q: 'What is venture capital?', opts: ['Investment in startups','Real estate investment','Bond investment','Savings account'], a:0}
+                ],
+                'health': [
+                    {q: 'How many chambers in the heart?', opts: ['4','2','3','5'], a:0},
+                    {q: 'What is the largest organ in the human body?', opts: ['Skin','Brain','Heart','Liver'], a:0},
+                    {q: 'What blood type is a universal donor?', opts: ['O negative','A','B','AB'], a:0},
+                    {q: 'What vitamin do we get from sunlight?', opts: ['Vitamin D','Vitamin A','Vitamin B','Vitamin C'], a:0},
+                    {q: 'How many muscles in the human body?', opts: ['646','206','346','806'], a:0},
+                    {q: 'What is normal body temperature?', opts: ['37°C','36°C','38°C','39°C'], a:0},
+                    {q: 'How many teeth do adults have?', opts: ['32','28','30','34'], a:0},
+                    {q: 'What is the hardest substance in the human body?', opts: ['Tooth enamel','Bone','Cartilage','Nail'], a:0},
+                    {q: 'What do red blood cells carry?', opts: ['Oxygen','Nutrients','Hormones','Antibodies'], a:0},
+                    {q: 'What is the primary function of the brain?', opts: ['Control and coordination','Digestion','Energy storage','Blood filtration'], a:0},
+                    {q: 'How many lungs do humans have?', opts: ['2','1','3','4'], a:0},
+                    {q: 'What is the smallest bone in the human body?', opts: ['Stapes (ear bone)','Femur','Tibia','Humerus'], a:0}
+                ],
+                'general': [
+                    {q: 'Which is a primary color?', opts: ['Red','Green','Purple','Pink'], a:0},
+                    {q: 'How many days in a year?', opts: ['365','360','370','375'], a:0},
+                    {q: 'What is the largest planet?', opts: ['Jupiter','Saturn','Neptune','Uranus'], a:0},
+                    {q: 'What is the capital of Italy?', opts: ['Rome','Milan','Venice','Florence'], a:0},
+                    {q: 'How many sides does a square have?', opts: ['4','3','5','6'], a:0},
+                    {q: 'What is the tallest mountain?', opts: ['Mount Everest','K2','Kangchenjunga','Lhotse'], a:0},
+                    {q: 'Who invented the telephone?', opts: ['Alexander Graham Bell','Thomas Edison','Nikola Tesla','Benjamin Franklin'], a:0},
+                    {q: 'What is the speed of sound?', opts: ['343 m/s','300 m/s','500 m/s','700 m/s'], a:0},
+                    {q: 'How many strings does a violin have?', opts: ['4','3','5','6'], a:0},
+                    {q: 'What is the most spoken language?', opts: ['Mandarin','English','Spanish','Hindi'], a:0}
+                ]
+            };
+
+            const categoryKeywords = ['history','science','geography','technology','literature','sports','art','business','health'];
+
+            for (let qi = 0; qi < quizzes.length; qi++) {
+                const quiz = quizzes[qi];
+                // only enrich admin-generated placeholder quizzes
+                if (!quiz || quiz.createdBy !== 'admin') continue;
+                // detect placeholder by question text containing 'Question' or 'Extra'
+                const isPlaceholder = quiz.questions && quiz.questions.length > 0 && (/Question|Extra|Bonus|Mega/i).test(quiz.questions[0].text);
+                if (!isPlaceholder) continue;
+
+                // determine category from title
+                let category = 'general';
+                const tt = quiz.title.toLowerCase();
+                for (const k of categoryKeywords) {
+                    if (tt.includes(k)) { category = k; break; }
+                }
+
+                // desired number of questions (keep current length but minimum 10)
+                const desired = Math.max(10, quiz.questions.length);
+                const pool = themedPools[category] || themedPools['general'];
+                const newQs = [];
+                for (let qn = 1; qn <= desired; qn++) {
+                    const sample = pool[(qn - 1) % pool.length];
+                    const opts = sample.opts.slice();
+                    // rotate options slightly for variety
+                    const shift = qn % opts.length;
+                    const rotated = opts.slice(shift).concat(opts.slice(0, shift));
+                    const correctIndex = (sample.a - shift + opts.length) % opts.length;
+                    newQs.push({ id: qn, text: `${sample.q}`, options: rotated, correct: correctIndex });
+                }
+                quiz.questions = newQs;
+            }
+        }
+
+        function displaySuperAdminPanel() {
+            displayAdminRequests();
+            displayAdmins();
+            displayAllUsers();
+            displayUserScores();
+            displayAdminMessages();
+            updateStats();
+        }
+
+        function displayAdminRequests() {
+            const table = document.getElementById('adminRequestsTable');
+            const body = document.getElementById('adminRequestsBody');
+
+            if (adminRequests.length === 0) {
+                table.style.display = 'none';
+                document.getElementById('noAdminRequestsText').style.display = 'block';
+                return;
+            }
+
+            table.style.display = 'table';
+            document.getElementById('noAdminRequestsText').style.display = 'none';
+
+            body.innerHTML = adminRequests.map(req => `
+                <tr>
+                    <td>${req.username}</td>
+                    <td>${req.email}</td>
+                    <td>${req.date}</td>
+                    <td>
+                        <button class="btn btn-success" style="padding: 0.4rem 0.8rem; font-size: 0.9rem; margin-right: 0.5rem;" onclick="approveAdmin('${req.username}')">Approve</button>
+                        <button class="btn btn-danger" style="padding: 0.4rem 0.8rem; font-size: 0.9rem;" onclick="denyAdmin('${req.username}')">Deny</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function approveAdmin(username) {
+            // Only the owner (Chimzy) can approve admin requests
+            if (!currentUser || currentUser.username !== 'Chimzy') {
+                alert('Only the owner can approve admin requests.');
+                return;
+            }
+
+            const user = users.find(u => u.username === username);
+            if (user) {
+                user.role = 'admin';
+                adminRequests = adminRequests.filter(r => r.username !== username);
+                saveData();
+                alert(`${username} is now an admin!`);
+                displaySuperAdminPanel();
+            }
+        }
+
+        function denyAdmin(username) {
+            if (confirm('Are you sure you want to deny this request?')) {
+                adminRequests = adminRequests.filter(r => r.username !== username);
+                saveData();
+                displaySuperAdminPanel();
+            }
+        }
+
+        function displayAdmins() {
+            const table = document.getElementById('adminsTable');
+            const body = document.getElementById('adminsBody');
+            const admins = users.filter(u => u.role === 'admin');
+
+            if (admins.length === 0) {
+                table.style.display = 'none';
+                document.getElementById('noAdminsText').style.display = 'block';
+                return;
+            }
+
+            table.style.display = 'table';
+            document.getElementById('noAdminsText').style.display = 'none';
+
+            body.innerHTML = admins.map(admin => {
+                const quizzesCreated = quizzes.filter(q => q.createdBy === admin.username).length;
+                return `
+                    <tr>
+                        <td>${admin.username}</td>
+                        <td>${admin.email}</td>
+                        <td>${quizzesCreated}</td>
+                        <td>
+                            <button class="btn btn-danger" style="padding: 0.4rem 0.8rem; font-size: 0.9rem;" onclick="removeAdmin('${admin.username}')">Remove</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Display all users for owner to manage/promote
+        function displayAllUsers() {
+            const table = document.getElementById('allUsersTable');
+            const body = document.getElementById('allUsersBody');
+            const allUsers = users.filter(u => u.role !== 'super_admin');
+
+            if (allUsers.length === 0) {
+                table.style.display = 'none';
+                document.getElementById('noUsersText').style.display = 'block';
+                return;
+            }
+
+            table.style.display = 'table';
+            document.getElementById('noUsersText').style.display = 'none';
+
+            body.innerHTML = allUsers.map(u => {
+                const promoteBtn = (u.role === 'user' && currentUser && currentUser.username === 'Chimzy') ?
+                    `<button class="btn btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.9rem;" onclick="promoteToAdmin('${u.username}')">Promote to Admin</button>` : '';
+
+                const removeBtn = (u.role === 'admin' && currentUser && currentUser.username === 'Chimzy') ?
+                    `<button class="btn btn-danger" style="padding: 0.4rem 0.8rem; font-size: 0.9rem;" onclick="removeAdmin('${u.username}')">Remove Admin</button>` : '';
+
+                return `
+                    <tr>
+                        <td>${u.username}</td>
+                        <td>${u.email || '-'}</td>
+                        <td>${u.role}</td>
+                        <td>${promoteBtn} ${removeBtn}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function promoteToAdmin(username) {
+            if (!currentUser || currentUser.username !== 'Chimzy') {
+                alert('Only the owner can promote users to admin.');
+                return;
+            }
+
+            const user = users.find(u => u.username === username);
+            if (user) {
+                user.role = 'admin';
+                saveData();
+                alert(`${username} has been promoted to admin.`);
+                displaySuperAdminPanel();
+            }
+        }
+
+        function resetDefaults() {
+            if (!currentUser || currentUser.username !== 'Chimzy') {
+                alert('Only the owner can reset defaults.');
+                return;
+            }
+
+            if (!confirm('This will reset quizzes to the built-in defaults and overwrite saved quizzes. Continue?')) return;
+
+            // clear stored quizzes and related data
+            localStorage.removeItem('quizzes');
+            localStorage.removeItem('userScores');
+            localStorage.removeItem('messages');
+            localStorage.removeItem('adminRequests');
+
+            // reinitialize defaults and reload UI
+            initializeDefaultQuizzes();
+            loadData();
+            alert('Default quizzes restored.');
+            displaySuperAdminPanel();
+        }
+
+        function removeAdmin(username) {
+            if (confirm('Are you sure you want to remove admin privileges?')) {
+                const user = users.find(u => u.username === username);
+                if (user) {
+                    user.role = 'user';
+                    saveData();
+                    displayAdmins();
+                }
+            }
+        }
+
+        function displayUserScores() {
+            const table = document.getElementById('scoresTable');
+            const body = document.getElementById('scoresBody');
+
+            if (userScores.length === 0) {
+                table.style.display = 'none';
+                document.getElementById('noScoresText').style.display = 'block';
+                return;
+            }
+
+            table.style.display = 'table';
+            document.getElementById('noScoresText').style.display = 'none';
+
+            body.innerHTML = userScores.map(score => `
+                <tr>
+                    <td>${score.username}</td>
+                    <td>${score.quizTitle}</td>
+                    <td>${score.score}/${score.total}</td>
+                    <td>${score.percentage}%</td>
+                    <td>${score.dateTaken}</td>
+                </tr>
+            `).join('');
+        }
+
+        function displayMessages() {
+            const table = document.getElementById('messagesTable');
+            const body = document.getElementById('messagesBody');
+            const userMessages = messages.filter(m => m.from === currentUser.username);
+
+            if (userMessages.length === 0) {
+                table.style.display = 'none';
+                document.getElementById('noMessagesText').style.display = 'block';
+                return;
+            }
+
+            table.style.display = 'table';
+            document.getElementById('noMessagesText').style.display = 'none';
+
+            body.innerHTML = userMessages.map((msg, idx) => `
+                <tr>
+                    <td>${msg.from}</td>
+                    <td>${msg.subject}</td>
+                    <td>${msg.date}</td>
+                    <td>
+                        <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.9rem;" onclick="viewMessage(${idx})">View</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function displayAdminMessages() {
+            const table = document.getElementById('adminMessagesTable');
+            const body = document.getElementById('adminMessagesBody');
+            const adminMessages = messages.filter(m => m.to === currentUser.username);
+
+            if (adminMessages.length === 0) {
+                table.style.display = 'none';
+                document.getElementById('noAdminMessagesText').style.display = 'block';
+                return;
+            }
+
+            table.style.display = 'table';
+            document.getElementById('noAdminMessagesText').style.display = 'none';
+
+            body.innerHTML = adminMessages.map((msg, idx) => `
+                <tr>
+                    <td>${msg.from}</td>
+                    <td>${msg.subject}</td>
+                    <td>${msg.date}</td>
+                    <td>
+                        <button class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.9rem;" onclick="viewAdminMessage('${msg.from}', '${msg.subject}', '${msg.message}')">View</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function sendMessage() {
+            const subject = document.getElementById('messageSubject').value;
+            const body = document.getElementById('messageBody').value;
+
+            if (!subject || !body) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const message = {
+                from: currentUser.username,
+                to: 'admin',
+                subject: subject,
+                message: body,
+                date: new Date().toLocaleDateString(),
+                email: SUPER_ADMIN_EMAIL
+            };
+
+            messages.push(message);
+            saveData();
+
+            alert(`Message sent to admin!\n\nNote: In a real application, this would be sent to ${SUPER_ADMIN_EMAIL}`);
+            document.getElementById('messageSubject').value = '';
+            document.getElementById('messageBody').value = '';
+        }
+
+        function viewMessage(index) {
+            const msg = messages.filter(m => m.from === currentUser.username)[index];
+            document.getElementById('messageDetail').innerHTML = `
+                <p><strong>From:</strong> ${msg.from}</p>
+                <p><strong>Subject:</strong> ${msg.subject}</p>
+                <p><strong>Date:</strong> ${msg.date}</p>
+                <p><strong>Message:</strong></p>
+                <p>${msg.message}</p>
+            `;
+            openModal('messageModal');
+        }
+
+        function viewAdminMessage(from, subject, message) {
+            document.getElementById('messageDetail').innerHTML = `
+                <p><strong>From:</strong> ${from}</p>
+                <p><strong>Subject:</strong> ${subject}</p>
+                <p><strong>Message:</strong></p>
+                <p>${message}</p>
+                <p style="margin-top: 1rem; color: #6b7280; font-size: 0.9rem;">📧 This message would be forwarded to: ${SUPER_ADMIN_EMAIL}</p>
+            `;
+            openModal('messageModal');
+        }
+
+        // Initialize
+        loadData();
+    </script>
+</body>
+</html>
